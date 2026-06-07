@@ -27,6 +27,7 @@ DB_PATH = Path(os.environ.get("NEWAPI_DB_PATH", "/home/daytona/newapi/data/one-a
 BACKUP_DIR = Path(os.environ.get("NEWAPI_BACKUP_DIR", "/home/daytona/backups/newapi"))
 MAX_BACKUP_AGE_HOURS = float(os.environ.get("NEWAPI_MAX_BACKUP_AGE_HOURS", "13"))
 MIN_FREE_BYTES = int(os.environ.get("NEWAPI_MIN_FREE_BYTES", str(1024 * 1024 * 1024)))
+PUBLIC_HEALTH_REQUIRED = os.environ.get("NEWAPI_PUBLIC_HEALTH_REQUIRED", "").lower() in {"1", "true", "yes", "on"}
 
 
 def http_json(url: str, timeout: int = 20) -> tuple[bool, Any]:
@@ -101,7 +102,12 @@ def main() -> int:
     public_ok, public_health = http_json(PUBLIC_HEALTH_URL)
     checks: dict[str, Any] = {
         "local_status": {"ok": local_ok, "result": local_status},
-        "public_worker_health": {"ok": public_ok, "result": public_health},
+        "public_worker_health": {
+            "ok": public_ok or not PUBLIC_HEALTH_REQUIRED,
+            "required": PUBLIC_HEALTH_REQUIRED,
+            "reachable": public_ok,
+            "result": public_health,
+        },
         "new_api_container": docker_container("new-api-public"),
         "grok2api_container": docker_container("grok2api"),
         "disk_free": disk_free(Path("/")),

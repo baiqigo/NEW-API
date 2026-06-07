@@ -42,7 +42,11 @@ python3 backup-auto/prod_probe.py
 
 The probe checks local New API status, public Worker health, Docker container
 state, disk free space, SQLite integrity, and latest full-backup age. It prints
-JSON and exits `0` only when all hard checks pass.
+JSON and exits `0` only when all hard checks pass. Because Daytona egress can
+reset requests back to the public Cloudflare hostname, public Worker health is a
+warning by default inside the sandbox; set `NEWAPI_PUBLIC_HEALTH_REQUIRED=true`
+when running the probe from an external network that should reach the public
+hostname directly.
 
 ## Install on backup-only Daytona B
 
