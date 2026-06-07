@@ -29,6 +29,21 @@ Stop:
 kill "$(cat /home/daytona/newapi_backup_auto/scheduler.pid)"
 ```
 
+## Read-only production probe
+
+Run this manually or from an external scheduler. It does not restart services,
+delete files, create backups, or mutate SQLite state.
+
+```bash
+cd /home/daytona/NEW-API
+git pull
+python3 backup-auto/prod_probe.py
+```
+
+The probe checks local New API status, public Worker health, Docker container
+state, disk free space, SQLite integrity, and latest full-backup age. It prints
+JSON and exits `0` only when all hard checks pass.
+
 ## Install on backup-only Daytona B
 
 ```bash
