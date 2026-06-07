@@ -28,3 +28,16 @@ Stop:
 ```bash
 kill "$(cat /home/daytona/newapi_backup_auto/scheduler.pid)"
 ```
+
+## Install on backup-only Daytona B
+
+```bash
+cd /home/daytona/NEW-API
+git pull
+bash backup-auto/install_b.sh
+vi /home/daytona/newapi_backup_auto/secrets.env
+bash backup-auto/install_b.sh --start
+```
+
+B pulls the latest encrypted GitHub Release asset, decrypts it locally, and
+verifies the `.sha256` file.
