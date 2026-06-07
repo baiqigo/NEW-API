@@ -6,7 +6,6 @@ SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 mkdir -p "$TARGET/logs"
 cp "$SOURCE/upload_release_backup.py" "$TARGET/upload_release_backup.py"
-cp "$SOURCE/trigger_b_restore.py" "$TARGET/trigger_b_restore.py"
 cp "$SOURCE/backup_once.sh" "$TARGET/backup_once.sh"
 cp "$SOURCE/backup_scheduler.sh" "$TARGET/backup_scheduler.sh"
 chmod 700 "$TARGET" "$TARGET"/*.py "$TARGET"/*.sh
@@ -17,10 +16,6 @@ if [[ ! -f "$TARGET/secrets.env" ]]; then
 GITHUB_TOKEN=''
 NEWAPI_BACKUP_AES_KEY_HEX=''
 
-# Optional. Add this to let the scheduler trigger backup-only Daytona B.
-DAYTONA_B_SID='2e205885-1e58-4589-8bb8-deed47aa3d85'
-DAYTONA_B_KEY=''
-
 # Optional tuning.
 NEWAPI_BACKUP_INTERVAL_SECONDS='43200'
 NEWAPI_BACKUP_KEEP_COUNT='8'
@@ -28,7 +23,8 @@ EOF
   chmod 600 "$TARGET/secrets.env"
 fi
 
-python3 -m py_compile "$TARGET/upload_release_backup.py" "$TARGET/trigger_b_restore.py"
+rm -f "$TARGET/trigger_b_restore.py"
+python3 -m py_compile "$TARGET/upload_release_backup.py"
 
 case "${1:-}" in
   --start)

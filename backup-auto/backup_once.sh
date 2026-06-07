@@ -43,11 +43,4 @@ find "$REMOTE_BACKUP_DIR" -maxdepth 1 -name 'full-backup-*.tar.gz' -type f -prin
 find "$REMOTE_BACKUP_DIR" -maxdepth 1 -name 'full-backup-*.tar.gz.sha256' -type f -printf '%T@ %p\n' |
   sort -nr | awk -v keep="$KEEP_COUNT" 'NR > keep {print $2}' | xargs -r rm -f
 
-if [[ -n "${DAYTONA_B_KEY:-}" ]]; then
-  echo "DAYTONA_B_KEY present, triggering B restore"
-  python3 "$BASE/trigger_b_restore.py"
-else
-  echo "DAYTONA_B_KEY not configured; B restore skipped"
-fi
-
 echo "[$(date -u +%FT%TZ)] backup_once done"
